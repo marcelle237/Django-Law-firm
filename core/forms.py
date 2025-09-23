@@ -6,7 +6,7 @@ from django.core.validators import validate_email
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth import get_user_model, password_validation
 from django.contrib.auth.password_validation import password_validators_help_text_html
-from .models import Visitor, Client, Case, Document, Appointment
+from .models import Visitor, Client, Case, Document, Appointment, Availability
 
 User = get_user_model()
 
@@ -289,4 +289,15 @@ class AppointmentForm(forms.ModelForm):
             'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
             'message': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Reason for appointment (optional)'}),
+        }
+
+
+class AvailabilityForm(forms.ModelForm):
+    class Meta:
+        model = Availability
+        fields = ['day', 'start_time', 'end_time']
+        widgets = {
+            'day': forms.Select(attrs={'class': 'form-control'}),
+            'start_time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
+            'end_time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
         }

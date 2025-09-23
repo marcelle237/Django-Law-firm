@@ -21,4 +21,9 @@ urlpatterns = [
     path('lawyers/', views.lawyers_list, name='lawyers_list'),
     # filepath: core/urls.py
     path('chat/<int:lawyer_id>/', views.chat_room, name='chat_room'),
+
+    
+    path("lawyer/availability/add/", views.set_availability, name="set_availability"),
+    path("lawyer/availability/", views.my_availability, name="my_availability"),
+
 ]
