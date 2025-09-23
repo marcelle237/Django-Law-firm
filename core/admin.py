@@ -344,7 +344,7 @@ class VisitorAdmin(admin.ModelAdmin):
 
 @admin.register(Appointment)
 class AppointmentAdmin(admin.ModelAdmin):
-    list_display = ('client', 'date', 'time', 'created_at')
+    list_display = ('client', 'date', 'time', 'message')
     search_fields = ('client__name', 'client__email', 'message')
     list_filter = ('date', 'client')
     ordering = ('-date', '-time')

@@ -2,8 +2,9 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
-import time
-from django.utils.time import timezone
+from datetime import time   # ✅ correct import
+
+from django.utils import timezone
 # ...existing code...
 
 WEEKDAYS = [
@@ -284,6 +285,7 @@ class Appointment(models.Model):
     lawyer = models.ForeignKey('LawyerProfile', on_delete=models.CASCADE)
     date = models.DateField()
     time = models.TimeField()
+    message = models.TextField(blank=True, null=True)
 
     def clean(self):
         # Cannot book in the past
@@ -316,6 +318,16 @@ class Availability(models.Model):
 
     class Meta:
         unique_together = ('lawyer', 'day')  # prevent duplicate availability per day
+
+    def clean(self):
+        if self.start_time < time(8, 0) or self.end_time > time(16, 0):
+            raise ValidationError("Availability must be between 8:00.am and 4:00.pm")
+
+        if self.start_time >= self.end_time:
+            raise ValidationError("Start time must be before end time.")
+
+        if self.day.lawyer() not in ["monday", "tuesday", "wednesday", "thursday", "friday"]:
+            raise ValidationError("Availability can only be set for weekdays (Monday to Friday).")
 
     def __str__(self):
         return f"{self.lawyer.user.username} available on {self.get_day_display()} from {self.start_time} to {self.end_time}"
