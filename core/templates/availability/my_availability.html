@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Availability</title>
+</head>
+<body>
+    <h2>My Availability</h2>
+    <ul>
+        {% for slot in slots %}
+            <li>{{ slot.get_day_display }}: {{ slot.start_time }} - {{ slot.end_time }}</li>
+        {% empty %}
+            <li>No availability set yet.</li>
+        {% endfor %}
+    </ul>
+    <br>
+    <a href="{% url 'set_availability' %}">Add Availability</a>
+</body>
+</html>

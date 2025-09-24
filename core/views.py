@@ -11,9 +11,10 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.models import User 
-from .models import Client, Case, Document, Visitor
-from .forms import ClientRegistrationForm, ClientProfileForm, CaseForm, DocumentForm, VisitorForm, AppointmentForm
+from .models import Client, Case, Document, Visitor, Availability, LawyerProfile
+from .forms import ClientRegistrationForm, ClientProfileForm, CaseForm, DocumentForm, VisitorForm, AppointmentForm, AvailabilityForm
 from .decorators import group_required
+
 
 def landing_page(request):
     if request.user.is_authenticated:
@@ -277,3 +278,26 @@ def book_appointment(request):
     else:
         form = AppointmentForm()
     return render(request, 'book_appointment.html', {'form': form})
+
+
+@login_required
+def set_availability(request):
+    lawyer_profile = LawyerProfile.objects.get(user=request.user)  # current lawyer
+    if request.method == "POST":
+        form = AvailabilityForm(request.POST)
+        if form.is_valid():
+            availability = form.save(commit=False)
+            availability.lawyer = lawyer_profile  # link to lawyer profile
+            availability.save()
+            return redirect("my_availability")
+    else:
+        form = AvailabilityForm()
+
+    return render(request, "availability/set_availability.html", {"form": form})
+
+
+@login_required
+def my_availability(request):
+    lawyer_profile = LawyerProfile.objects.get(user=request.user)
+    slots = Availability.objects.filter(lawyer=lawyer_profile)
+    return render(request, "availability/my_availability.html", {"slots": slots})

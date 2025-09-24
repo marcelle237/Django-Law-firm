@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Set Availability</title>
+</head>
+<body>
+    <h2>Set Your Availability</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
+    <br>
+    <a href="{% url 'my_availability' %}">View My Availability</a>
+</body>
+</html>
