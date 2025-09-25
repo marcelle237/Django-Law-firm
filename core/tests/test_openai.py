@@ -1,6 +1,6 @@
 # import openai
 
-# openai.api_key = "YOUR_API_KEY"
+# openai.api_key = "YOUR_API_KEY" add this on your local testing before uncommenting the following lines
 
 # response = openai.ChatCompletion.create(
 #     model="gpt-4.1-mini",

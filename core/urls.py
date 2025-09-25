@@ -23,7 +23,7 @@ urlpatterns = [
     path('chat/<int:lawyer_id>/', views.chat_room, name='chat_room'),
 
     
-    path("lawyer/availability/add/", views.set_availability, name="set_availability"),
-    path("lawyer/availability/", views.my_availability, name="my_availability"),
+    path("availability/add/", views.set_availability, name="set_availability"),
+    path("availability/", views.my_availability, name="my_availability"),
 
 ]

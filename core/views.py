@@ -287,7 +287,9 @@ def set_availability(request):
         form = AvailabilityForm(request.POST)
         if form.is_valid():
             availability = form.save(commit=False)
-            availability.lawyer = lawyer_profile  # link to lawyer profile
+            availability.lawyer = lawyer_profile
+            lawyer_id = request.POST.get("lawyer")
+            availability.lawyer = request.user.lawyer_profile  # assign the Lawyer object, not a string
             availability.save()
             return redirect("my_availability")
     else:
