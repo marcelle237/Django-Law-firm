@@ -198,13 +198,40 @@ def case_detail(request, pk):
     }
     return render(request, 'case_detail.html', context)
 
-def chat_room(request, lawyer_id):
-    lawyer = get_object_or_404(User, id=lawyer_id)
-    room_name = f"user_{min(request.user.id, lawyer.id)}_{max(request.user.id, lawyer.id)}"
-    return render(request, 'chat_room.html', {
-        'room_name': room_name,
-        'lawyer': lawyer,
-    })
+# def chat_room(request):
+#     if request.method == 'POST':
+#         message = request.POST.get('message')
+
+#         if message:
+#             Message.objects.create(
+#                 sender=request.user.username,
+#                 content=message
+#             )
+#             async_to_sync(channel_layer.group_send)(
+#                 'chat_group',
+#                 {
+#                     'type': 'message_received',
+#                     'message': message
+#                 },
+#             )
+#             return JsonResponse({'message': 'Message sent successfully!!!'})
+        
+#     return JsonResponse({'message': 'Invalid request!!!'}, status=400)
+#     return render(request, "chat_room.html", {"chat": chat})
+
+
+@login_required
+def chat_room(request, lawyer_id=None):
+    """
+    Renders the chat room template for a given lawyer-client room.
+    The room_name can be constructed as needed (e.g., f"lawyer_{lawyer_id}_client_{request.user.id}")
+    """
+    # You can customize room_name logic as needed for your app
+    if lawyer_id:
+        room_name = f"lawyer_{lawyer_id}_client_{request.user.id}"
+    else:
+        room_name = "lawyer_client_room"
+    return render(request, "chat_room.html", {"room_name": room_name})
 
 def lawyers_list(request):
     # LawyerProfile = get_user_model()

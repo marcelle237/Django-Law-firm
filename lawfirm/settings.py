@@ -71,8 +71,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'lawfirm.wsgi.application'
 
-ASGI_APPLICATION = 'lawfirm.asgi.application'
+ASGI_APPLICATION = 'lawfirm.asgi.application',
 
+# Channels configuration
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.5', 6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
