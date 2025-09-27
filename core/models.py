@@ -321,10 +321,13 @@ class Availability(models.Model):
 
 
 class Message(models.Model):
-    sender = models.CharField(max_length=150)
-    # receiver = models.CharField(max_length=150)
-    content = models.TextField()
+    lawyer_id = models.IntegerField()  # or ForeignKey to a Lawyer model if you have one
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['timestamp']
+        ordering = ['timestamp']   # newest last
+
+    def __str__(self):
+        return f"{self.sender} @ {self.timestamp}: {self.text[:30]}"

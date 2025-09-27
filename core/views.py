@@ -11,7 +11,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.models import User 
-from .models import Client, Case, Document, Visitor, Availability, LawyerProfile
+from .models import Client, Case, Document, Visitor, Availability, LawyerProfile, Message
 from .forms import ClientRegistrationForm, ClientProfileForm, CaseForm, DocumentForm, VisitorForm, AppointmentForm, AvailabilityForm
 from .decorators import group_required
 
@@ -221,17 +221,28 @@ def case_detail(request, pk):
 
 
 @login_required
-def chat_room(request, lawyer_id=None):
-    """
-    Renders the chat room template for a given lawyer-client room.
-    The room_name can be constructed as needed (e.g., f"lawyer_{lawyer_id}_client_{request.user.id}")
-    """
-    # You can customize room_name logic as needed for your app
-    if lawyer_id:
-        room_name = f"lawyer_{lawyer_id}_client_{request.user.id}"
-    else:
-        room_name = "lawyer_client_room"
-    return render(request, "chat_room.html", {"room_name": room_name})
+
+def chat_room(request, lawyer_id):
+    history = Message.objects.filter(lawyer_id=lawyer_id).select_related('sender')
+    return render(request, 'chat/chat_room.html', {
+        'lawyer_id': lawyer_id,
+        'history': history,
+    })
+
+    return render(request, 'chat/chat_room.html', {...})
+
+# def chat_room(request, lawyer_id=None):
+#     """
+#     Renders the chat room template for a given lawyer-client room.
+#     The room_name can be constructed as needed (e.g., f"lawyer_{lawyer_id}_client_{request.user.id}")
+#     """
+#     # You can customize room_name logic as needed for your app
+#     if lawyer_id:
+#         room_name = f"lawyer_{lawyer_id}_client_{request.user.id}"
+#     else:
+#         room_name = "lawyer_client_room"
+#     return render(request, "chat_room.html", {"room_name": room_name})
+
 
 def lawyers_list(request):
     # LawyerProfile = get_user_model()
