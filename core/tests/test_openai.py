@@ -13,7 +13,7 @@
 # test_openai.py
 import openai
 
-openai.api_key = "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"
+
 
 response = openai.chat.completions.create(
     model="gpt-4.1-mini",
