@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}Chat Room{% endblock %}
+
+{% block content %}
+
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-comments me-2"></i>Chat Room</h4>
+                </div>
+                <div class="card-body" style="height: 400px; overflow-y: auto;" id="chat-log">
+                    {% for msg in history %}
+                        <div class="mb-2">
+                            <span class="badge bg-secondary">{{ msg.timestamp|date:"Y-m-d H:i" }}</span>
+                            <span class="fw-bold">{{ msg.sender.username }}</span>:
+                            <span>{{ msg.text }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="card-footer">
+                    <form id="chat-form" class="d-flex">
+                        <input id="chat-message-input" type="text" class="form-control me-2" placeholder="Type your message..." autocomplete="off" required>
+                        <button id="chat-message-submit" type="submit" class="btn btn-success">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </form> <br>
+                    <button id="start-video-btn" class="btn btn-outline-primary w-100 mb-2">
+                        <i class="fas fa-video"></i> Start Video Call
+                    </button>
+                    <div id="video-call-area" class="mt-3" style="display:none;">
+                        <video id="localVideo" autoplay playsinline muted style="width: 48%; border-radius: 8px; border: 2px solid #007bff;"></video>
+                        <video id="remoteVideo" autoplay playsinline style="width: 48%; border-radius: 8px; border: 2px solid #28a745;"></video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    // Replace with actual room name logic if needed
+    const roomName = "{{ room_name|default:'lawyer_client_room' }}";
+    const username = "{{ user.get_full_name|default:user.username }}";
+    const socket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
+    );
+
+    const chatLog = document.getElementById('chat-log');
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-message-input');
+
+    socket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const messageElem = document.createElement('div');
+        messageElem.classList.add('mb-2');
+        if (data.sender === username) {
+            messageElem.innerHTML = `<div class="text-end"><span class="badge bg-success">${data.sender}:</span> ${data.message}</div>`;
+        } else {
+            messageElem.innerHTML = `<div class="text-start"><span class="badge bg-primary">${data.sender}:</span> ${data.message}</div>`;
+        }
+        chatLog.appendChild(messageElem);
+        chatLog.scrollTop = chatLog.scrollHeight;
+    };
+
+    chatForm.onsubmit = function(e) {
+        e.preventDefault();
+        const message = chatInput.value.trim();
+        if (message) {
+            socket.send(JSON.stringify({
+                'message': message,
+                'sender': username
+            }));
+            chatInput.value = '';
+        }
+    };
+
+    // Video Call Logic
+    let localStream;
+    let peerConnection;
+    const startVideoBtn = document.getElementById('start-video-btn');
+    const videoArea = document.getElementById('video-call-area');
+    const localVideo = document.getElementById('localVideo');
+    const remoteVideo = document.getElementById('remoteVideo');
+    const iceServers = { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }] };
+
+    startVideoBtn.onclick = async function() {
+        videoArea.style.display = 'block';
+        startVideoBtn.disabled = true;
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        localVideo.srcObject = localStream;
+        createPeerConnection();
+        localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+        if (isInitiator()) {
+            peerConnection.createOffer().then(offer => {
+                peerConnection.setLocalDescription(offer);
+                sendSignal({ 'sdp': offer });
+            });
+        }
+    };
+
+    function createPeerConnection() {
+        peerConnection = new RTCPeerConnection(iceServers);
+        peerConnection.onicecandidate = function(event) {
+            if (event.candidate) {
+                sendSignal({ 'candidate': event.candidate });
+            }
+        };
+        peerConnection.ontrack = function(event) {
+            remoteVideo.srcObject = event.streams[0];
+        };
+    }
+
+    function sendSignal(signal) {
+        socket.send(JSON.stringify({
+            'type': 'signal',
+            'sender': username,
+            'signal': signal
+        }));
+    }
+
+    function handleSignal(signal) {
+        if (!peerConnection) createPeerConnection();
+        if (signal.sdp) {
+            peerConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp)).then(() => {
+                if (signal.sdp.type === 'offer') {
+                    peerConnection.createAnswer().then(answer => {
+                        peerConnection.setLocalDescription(answer);
+                        sendSignal({ 'sdp': answer });
+                    });
+                }
+            });
+        } else if (signal.candidate) {
+            peerConnection.addIceCandidate(new RTCIceCandidate(signal.candidate));
+        }
+    }
+
+    // Simple initiator logic: first user to click "Start Video Call" is initiator
+    function isInitiator() {
+        // You can improve this logic for production
+        return true;
+    }
+
+</script>
+{% endblock %}

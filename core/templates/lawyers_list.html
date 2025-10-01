@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Our Lawyers{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Meet Our Lawyers</h1>
+    <div class="row">
+
+        {% for lawyer in lawyers %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <img src="{{ lawyer.photo.url }}" alt="{{ lawyer.user }}" 
+                    class="img-fluid rounded mb-2 w-full h-100" style="max-height:120px;">
+                    <h5 class="card-title">{{ lawyer.get_full_name|default:lawyer.user }}</h5>
+                    <p class="card-text"><strong>Bio:</strong> {{ lawyer.bio }}</p>
+
+                    <a href="{% url 'lawyer_availability' lawyer.user.id %}" class="btn btn-outline-primary w-100 mt-2">
+                        <i class="fas fa-comments me-1"></i> Book Consultation
+                    </a>
+
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No lawyers found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

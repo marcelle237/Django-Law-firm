@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>My Availability</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group mb-3">
+                        {% for slot in slots %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{{ slot.get_day_display }}</span>
+                                <span>{{ slot.start_time }} - {{ slot.end_time }}</span>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item text-muted">No availability set yet.</li>
+                        {% endfor %}
+                    </ul>
+                    <div class="text-center">
+                        <a href="{% url 'set_availability' %}" class="btn btn-outline-success">
+                            <i class="fas fa-calendar-plus me-1"></i> Add Availability
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
