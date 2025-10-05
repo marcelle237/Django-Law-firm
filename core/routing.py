@@ -4,5 +4,5 @@ from . import consumers
 from core import consumers
 
 websocket_urlpatterns = [
-    re_path(r'ws/chat/(?P<lawyer_id>\d+)/$', consumers.ChatConsumer.as_asgi()),
+    re_path(r'ws/chat/(?P<lawyer_id>\w+)/$', consumers.ChatConsumer.as_asgi()),
 ]

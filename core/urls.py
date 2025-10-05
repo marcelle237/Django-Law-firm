@@ -20,7 +20,7 @@ urlpatterns = [
     path('book-appointment/', views.book_appointment, name='book_appointment'),
     path('lawyers/', views.lawyers_list, name='lawyers_list'),
     # filepath: core/urls.py
-    path('chat/<int:lawyer_id>/', views.chat_room, name='chat_room'),
+    path('chat/<str:room_name>/', views.chat_room, name='chat_room'),
 
     
     path("availability/add/", views.set_availability, name="set_availability"),

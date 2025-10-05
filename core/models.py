@@ -321,16 +321,16 @@ class Availability(models.Model):
 
 
 class Message(models.Model):
-    lawyer_id = models.IntegerField()  # or ForeignKey to a Lawyer model if you have one
+    room_name = models.CharField(max_length=255)  # identify which chat room
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['timestamp']   # newest last
+        ordering = ['timestamp']
 
     def __str__(self):
-        return f"{self.sender} @ {self.timestamp}: {self.text[:30]}"
+        return f"{self.sender.username}: {self.text[:30]}"
     
 class Booking(models.Model):
     STATUS_CHOICES = [

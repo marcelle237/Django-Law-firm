@@ -13,11 +13,20 @@
                     <h4 class="mb-0"><i class="fas fa-comments me-2"></i>Chat Room</h4>
                 </div>
                 <div class="card-body" style="height: 400px; overflow-y: auto;" id="chat-log">
-                    {% for msg in history %}
+                    <!-- {% for msg in history %}
                         <div class="mb-2">
                             <span class="badge bg-secondary">{{ msg.timestamp|date:"Y-m-d H:i" }}</span>
                             <span class="fw-bold">{{ msg.sender.username }}</span>:
                             <span>{{ msg.text }}</span>
+                        </div>
+                    {% endfor %} -->
+                    {% for msg in history %}
+                        <div class="mb-2 {% if msg.sender == user %}text-end{% else %}text-start{% endif %}">
+                            <span class="badge {% if msg.sender == user %}bg-success{% else %}bg-primary{% endif %}">
+                                {{ msg.sender.username }}
+                            </span>
+                            <span class="ms-2">{{ msg.text }}</span>
+                            <small class="text-muted">{{ msg.timestamp|date:"H:i" }}</small>
                         </div>
                     {% endfor %}
                 </div>
@@ -56,15 +65,23 @@
 
     socket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        const messageElem = document.createElement('div');
-        messageElem.classList.add('mb-2');
-        if (data.sender === username) {
-            messageElem.innerHTML = `<div class="text-end"><span class="badge bg-success">${data.sender}:</span> ${data.message}</div>`;
+
+        if (data.type === 'signal') {
+            handleSignal(data.signal);
+            
         } else {
-            messageElem.innerHTML = `<div class="text-start"><span class="badge bg-primary">${data.sender}:</span> ${data.message}</div>`;
+            const messageElem = document.createElement('div');
+            messageElem.classList.add('mb-2');
+
+            if (data.sender === username) {
+                messageElem.innerHTML = `<div class="text-end"><span class="badge bg-success">${data.sender}:</span> ${data.message}</div>`;
+            } else {
+                messageElem.innerHTML = `<div class="text-start"><span class="badge bg-primary">${data.sender}:</span> ${data.message}</div>`;
+            }
+            chatLog.appendChild(messageElem);
+            chatLog.scrollTop = chatLog.scrollHeight;
         }
-        chatLog.appendChild(messageElem);
-        chatLog.scrollTop = chatLog.scrollHeight;
+
     };
 
     chatForm.onsubmit = function(e) {

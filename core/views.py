@@ -198,52 +198,19 @@ def case_detail(request, pk):
     }
     return render(request, 'case_detail.html', context)
 
-# def chat_room(request):
-#     if request.method == 'POST':
-#         message = request.POST.get('message')
-
-#         if message:
-#             Message.objects.create(
-#                 sender=request.user.username,
-#                 content=message
-#             )
-#             async_to_sync(channel_layer.group_send)(
-#                 'chat_group',
-#                 {
-#                     'type': 'message_received',
-#                     'message': message
-#                 },
-#             )
-#             return JsonResponse({'message': 'Message sent successfully!!!'})
-        
-#     return JsonResponse({'message': 'Invalid request!!!'}, status=400)
-#     return render(request, "chat_room.html", {"chat": chat})
-
 
 @login_required
-
-def chat_room(request, lawyer_id):
-    history = Message.objects.filter(lawyer_id=lawyer_id).select_related('sender')
+def chat_room(request, room_name):
+    history = Message.objects.filter(room_name=room_name).select_related('sender')
     return render(request, 'chat/chat_room.html', {
-        'lawyer_id': lawyer_id,
+        'room_name': room_name,
         'history': history,
     })
 
     return render(request, 'chat/chat_room.html', {...})
 
-# def chat_room(request, lawyer_id=None):
-#     """
-#     Renders the chat room template for a given lawyer-client room.
-#     The room_name can be constructed as needed (e.g., f"lawyer_{lawyer_id}_client_{request.user.id}")
-#     """
-#     # You can customize room_name logic as needed for your app
-#     if lawyer_id:
-#         room_name = f"lawyer_{lawyer_id}_client_{request.user.id}"
-#     else:
-#         room_name = "lawyer_client_room"
-#     return render(request, "chat_room.html", {"room_name": room_name})
 
-
+@login_required
 def lawyers_list(request):
     # LawyerProfile = get_user_model()
     from .models import LawyerProfile
