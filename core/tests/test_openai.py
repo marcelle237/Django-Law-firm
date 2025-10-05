@@ -14,7 +14,6 @@
 import openai
 
 
-
 response = openai.chat.completions.create(
     model="gpt-4.1-mini",
     messages=[{"role": "user", "content": "Hello!"}]

@@ -56,7 +56,11 @@ ROOT_URLCONF = 'lawfirm.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+<<<<<<< HEAD
         'DIRS': [BASE_DIR / 'templates'],
+=======
+        'DIRS': [],
+>>>>>>> 7ed60f327162c664ac0bf60ce07ea022c213fd29
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

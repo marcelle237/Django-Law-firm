@@ -11,7 +11,11 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.models import User 
+<<<<<<< HEAD
 from .models import Booking, Client, Case, Document, Visitor, Availability, LawyerProfile, Message
+=======
+from .models import Client, Case, Document, Visitor, Availability, LawyerProfile
+>>>>>>> 7ed60f327162c664ac0bf60ce07ea022c213fd29
 from .forms import ClientRegistrationForm, ClientProfileForm, CaseForm, DocumentForm, VisitorForm, AppointmentForm, AvailabilityForm
 from .decorators import group_required
 
