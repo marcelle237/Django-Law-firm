@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Availability for {{ lawyer.user.get_full_name }}</h2>
+
+    {% if availabilities %}
+    <div class="row">
+        {% for slot in availabilities %}
+            <div class="col-md-4 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ slot.get_day_display }}</h5>
+                        <p class="card-text">
+                            {{ slot.start_time|time:"H:i" }} - {{ slot.end_time|time:"H:i" }}
+                        </p>
+
+                        {% if slot.is_booked %}
+                        <button class="btn btn-secondary w-100" disabled>Booked</button>
+                        {% else %}
+                        <form method="post" action="{% url 'book_slot' slot.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary w-100">Book</button>
+                        </form>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+    {% else %}
+    <p class="text-muted">This lawyer has not set any availability yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

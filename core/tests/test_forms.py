@@ -6,8 +6,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from ..models import Client, Case, Document
 from ..forms import ClientRegistrationForm, ClientProfileForm, CaseForm, DocumentForm
+from core.models import Client, Case, Document
 
 User = get_user_model()
 

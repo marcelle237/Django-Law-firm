@@ -295,6 +295,7 @@ class AppointmentForm(forms.ModelForm):
 class AvailabilityForm(forms.ModelForm):
     class Meta:
         model = Availability
+        exclude = ['lawyer']  # Exclude lawyer so it's not set by the form
         fields = ['day', 'start_time', 'end_time']
         widgets = {
             'day': forms.Select(attrs={'class': 'form-control'}),

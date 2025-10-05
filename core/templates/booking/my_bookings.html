@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>My Bookings</h2>
+
+    {% if bookings %}
+        <div class="row">
+            {% for booking in bookings %}
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ booking.availability.get_day_display }}</h5>
+                            <p class="card-text">
+                                Time: {{ booking.availability.start_time|time:"H:i" }} - {{ booking.availability.end_time|time:"H:i" }} <br>
+                                Lawyer: {{ booking.availability.lawyer.user.get_full_name }} <br>
+                                Booked at: {{ booking.booked_at|date:"M d, Y H:i" }}
+                            </p>
+                            <span class="badge 
+                                {% if booking.status == 'pending' %} bg-warning text-dark
+                                {% elif booking.status == 'approved' %} bg-success
+                                {% elif booking.status == 'declined' %} bg-danger
+                                {% endif %}
+                            ">
+                                {{ booking.get_status_display }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">You have not made any bookings yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

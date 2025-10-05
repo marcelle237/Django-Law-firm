@@ -264,21 +264,6 @@ class Visitor(models.Model):
     def __str__(self):
         return f"Inquiry from {self.name} on {self.submitted_at.strftime('%Y-%m-%d')}"
 
-
-# class Appointment(models.Model):
-#     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='appointments')
-#     date = models.DateField()
-#     time = models.TimeField()
-#     message = models.TextField(blank=True)
-#     created_at = models.DateTimeField(auto_now_add=True)
-
-#     class Meta:
-#         ordering = ['-date', '-time']
-
-#     def __str__(self):
-#         return f"Appointment for {self.client.name} on {self.date} at {self.time}"
-
-
 # Appointment
 class Appointment(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='appointments')
@@ -326,18 +311,39 @@ class Availability(models.Model):
         if self.start_time >= self.end_time:
             raise ValidationError("Start time must be before end time.")
 
-        if self.day.lawyer() not in ["monday", "tuesday", "wednesday", "thursday", "friday"]:
+        valid_days = [day[1] for day in WEEKDAYS]  
+
+        if self.get_day_display() not in valid_days:
             raise ValidationError("Availability can only be set for weekdays (Monday to Friday).")
 
     def __str__(self):
-        return f"{self.lawyer.user.username} available on {self.get_day_display()} from {self.start_time} to {self.end_time}"
+        return f"{self.lawyer.user} available on {self.get_day_display()} from {self.start_time} to {self.end_time}"
 
 
 class Message(models.Model):
-    sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
-    receiver = models.ForeignKey(User, related_name='received_messages', on_delete=models.CASCADE)
+    room_name = models.CharField(max_length=255)  # identify which chat room
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['timestamp']
+
+    def __str__(self):
+        return f"{self.sender.username}: {self.text[:30]}"
+    
+class Booking(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('declined', 'Declined'),
+    ]
+
+    availability = models.ForeignKey(Availability, on_delete=models.CASCADE, related_name="bookings")
+    client = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings")
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    booked_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.client} booked {self.availability} ({self.status})"
+

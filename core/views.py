@@ -11,7 +11,11 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.models import User 
+<<<<<<< HEAD
+from .models import Booking, Client, Case, Document, Visitor, Availability, LawyerProfile, Message
+=======
 from .models import Client, Case, Document, Visitor, Availability, LawyerProfile
+>>>>>>> 7ed60f327162c664ac0bf60ce07ea022c213fd29
 from .forms import ClientRegistrationForm, ClientProfileForm, CaseForm, DocumentForm, VisitorForm, AppointmentForm, AvailabilityForm
 from .decorators import group_required
 
@@ -198,14 +202,19 @@ def case_detail(request, pk):
     }
     return render(request, 'case_detail.html', context)
 
-def chat_room(request, lawyer_id):
-    lawyer = get_object_or_404(User, id=lawyer_id)
-    room_name = f"user_{min(request.user.id, lawyer.id)}_{max(request.user.id, lawyer.id)}"
-    return render(request, 'chat_room.html', {
+
+@login_required
+def chat_room(request, room_name):
+    history = Message.objects.filter(room_name=room_name).select_related('sender')
+    return render(request, 'chat/chat_room.html', {
         'room_name': room_name,
-        'lawyer': lawyer,
+        'history': history,
     })
 
+    return render(request, 'chat/chat_room.html', {...})
+
+
+@login_required
 def lawyers_list(request):
     # LawyerProfile = get_user_model()
     from .models import LawyerProfile
@@ -287,7 +296,9 @@ def set_availability(request):
         form = AvailabilityForm(request.POST)
         if form.is_valid():
             availability = form.save(commit=False)
-            availability.lawyer = lawyer_profile  # link to lawyer profile
+            availability.lawyer = lawyer_profile
+            lawyer_id = request.POST.get("lawyer")
+            availability.lawyer = request.user.lawyer_profile  # assign the Lawyer object, not a string
             availability.save()
             return redirect("my_availability")
     else:
@@ -301,3 +312,59 @@ def my_availability(request):
     lawyer_profile = LawyerProfile.objects.get(user=request.user)
     slots = Availability.objects.filter(lawyer=lawyer_profile)
     return render(request, "availability/my_availability.html", {"slots": slots})
+
+@login_required
+def lawyer_availability(request, user_id):
+    lawyer = get_object_or_404(LawyerProfile, user_id=user_id)
+    availabilities = Availability.objects.filter(lawyer=lawyer).order_by('day', 'start_time')
+
+        # Annotate each slot with is_booked = True if there is any pending or approved booking
+    for slot in availabilities:
+        slot.is_booked = slot.bookings.filter(status__in=['pending', 'approved']).exists()
+
+    return render(request, "availability/lawyer_availability.html", {
+        "lawyer": lawyer,
+        "availabilities": availabilities
+    })
+
+@login_required
+def book_slot(request, availability_id):
+    availability = get_object_or_404(Availability, id=availability_id)
+
+    # Only consider pending or approved bookings as blocking the slot
+    if availability.bookings.filter(status__in=['pending', 'approved']).exists():
+        return redirect("lawyer_availability", user_id=availability.lawyer.user_id)
+
+    # Create booking
+    Booking.objects.create(
+        availability=availability,
+        client=request.user
+    )
+    return redirect("lawyer_availability", user_id=availability.lawyer.user_id)
+
+@login_required
+def my_bookings(request):
+    bookings = request.user.bookings.select_related("availability__lawyer").order_by("-booked_at")
+    return render(request, "booking/my_bookings.html", {"bookings": bookings})
+
+@login_required
+def lawyer_bookings(request):
+    # Find the lawyer profile of the logged-in user
+    lawyer = get_object_or_404(LawyerProfile, user=request.user)
+
+    # Get all bookings for this lawyer's availabilities
+    bookings = Booking.objects.filter(
+        availability__lawyer=lawyer
+    ).select_related("availability__lawyer", "client").order_by("-booked_at")
+
+    return render(request, "booking/lawyer_bookings.html", {"bookings": bookings})
+
+@login_required
+def update_booking_status(request, booking_id, status):
+    booking = get_object_or_404(Booking, id=booking_id, availability__lawyer__user=request.user)
+
+    if status in ["approved", "declined"]:
+        booking.status = status
+        booking.save()
+
+    return redirect("lawyer_bookings")

@@ -4,38 +4,6 @@
 <div class="container py-4">
     <h1 class="mb-4">Meet Our Lawyers</h1>
     <div class="row">
-        <!-- Random sample lawyer profiles for demonstration -->
-        <!-- <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Jane Doe</h5>
-                    <p class="card-text"><strong>Email:</strong> jane.doe@lawfirm.com</p>
-                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Jane Doe" class="img-fluid rounded mb-2" style="max-height:120px;">
-                    <p class="card-text">Jane specializes in family law and has over 10 years of experience helping clients resolve complex legal matters with compassion and expertise.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">John Smith</h5>
-                    <p class="card-text"><strong>Email:</strong> john.smith@lawfirm.com</p>
-                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="John Smith" class="img-fluid rounded mb-2" style="max-height:120px;">
-                    <p class="card-text">John is an expert in corporate law, known for his strategic thinking and dedication to protecting his clients' business interests.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Emily Chen</h5>
-                    <p class="card-text"><strong>Email:</strong> emily.chen@lawfirm.com</p>
-                    <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Emily Chen" class="img-fluid rounded mb-2" style="max-height:120px;">
-                    <p class="card-text">Emily is passionate about criminal defense and has successfully represented clients in high-profile cases across the country.</p>
-                </div>
-            </div>
-        </div> -->
-        <!-- End of random sample profiles -->
 
         {% for lawyer in lawyers %}
         <div class="col-md-4 mb-4">
@@ -46,8 +14,8 @@
                     <h5 class="card-title">{{ lawyer.get_full_name|default:lawyer.user }}</h5>
                     <p class="card-text"><strong>Bio:</strong> {{ lawyer.bio }}</p>
 
-                    <a href="{% url 'chat_room' lawyer.user.id %}" class="btn btn-outline-primary w-100 mt-2">
-                        <i class="fas fa-comments me-1"></i> Discuss
+                    <a href="{% url 'lawyer_availability' lawyer.user.id %}" class="btn btn-outline-primary w-100 mt-2">
+                        <i class="fas fa-comments me-1"></i> Book Consultation
                     </a>
 
                 </div>

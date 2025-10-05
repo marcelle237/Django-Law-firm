@@ -56,7 +56,11 @@ ROOT_URLCONF = 'lawfirm.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+<<<<<<< HEAD
+        'DIRS': [BASE_DIR / 'templates'],
+=======
         'DIRS': [],
+>>>>>>> 7ed60f327162c664ac0bf60ce07ea022c213fd29
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -71,8 +75,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'lawfirm.wsgi.application'
 
-ASGI_APPLICATION = 'lawfirm.asgi.application'
+ASGI_APPLICATION = 'lawfirm.asgi.application',
 
+# Channels configuration
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)], # Ensure Redis is running on this host and port
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -133,3 +146,5 @@ MEDIA_ROOT = BASE_DIR / 'media'
 AUTH_USER_MODEL = 'core.User'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
+
+DJANGO_SETTINGS_MODULE = 'lawfirm.settings'
