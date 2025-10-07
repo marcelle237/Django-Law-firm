@@ -26,4 +26,6 @@ urlpatterns = [
     path("availability/add/", views.set_availability, name="set_availability"),
     path("availability/", views.my_availability, name="my_availability"),
 
+    path("chatbot/", views.chatbot_view, name="chatbot"),
+
 ]

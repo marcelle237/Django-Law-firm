@@ -1,44 +1,519 @@
 {% extends 'base.html' %}
+{% load form_filters %}
 
-{% block title %}Welcome{% endblock %}
+{% block title %}Welcome | Our Law Firm{% endblock %}
 
 {% block content %}
-{% load form_filters %}
-<div class="p-5 mb-4 bg-light rounded-3">
-    <div class="container-fluid py-5">
-        <h1 class="display-5 fw-bold">Welcome to Our Law Firm</h1>
-        <p class="col-md-8 fs-4">Providing expert legal services with dedication and integrity. We are here to help you navigate the complexities of the legal system.</p>
+<!-- Hero Section -->
+<section class="container py-5" style="min-height: 85vh;">
+    <div class="row align-items-center">
+        <!-- Left Content -->
+        <div class="col-md-6 mb-4 mb-md-0">
+            <h1 class="fw-bold display-5 text-dark mb-4" style="line-height: 1.2;">
+                Workplace Injustice?<br>
+                <span class="text-dark">We Protect Your Rights and Fight for Justice.</span>
+            </h1>
+            <p class="text-secondary mb-4 fs-5">
+                You don’t have to navigate this alone. Let’s find your path forward together.
+            </p>
+            <a href="#contact" class="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm">
+                Get a free case review
+            </a>
+        </div>
+
+        <!-- Right Image -->
+        <div class="col-md-6 text-center">
+            <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80"
+                 alt="Law team working together"
+                 class="img-fluid rounded-4 shadow-sm"
+                 style="max-height: 450px; object-fit: cover;">
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=600"
+                     alt="Law Office"
+                     class="img-fluid rounded shadow">
+            </div>
+            <div class="col-lg-6">
+                <h2 class="fw-bold text-dark mb-3">Welcome to Our Law Firm</h2>
+                <p class="fs-5 text-secondary mb-4">
+                    We are a team of experienced lawyers providing expert legal solutions across Cameroon.
+                    From business and property disputes to criminal and family law, we are dedicated to delivering justice with integrity and compassion.
+                </p>
+                <ul class="list-unstyled text-secondary">
+                    <li class="mb-2"><i class="bi bi-check-circle text-warning me-2"></i> Business and Corporate Law</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-warning me-2"></i> Family and Civil Matters</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-warning me-2"></i> Criminal Defense</li>
+                    <li><i class="bi bi-check-circle text-warning me-2"></i> Property and Real Estate Law</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Floating Chatbot Button -->
+<button id="chatbot-trigger" class="btn btn-primary btn-lg rounded-circle chatbot-trigger shadow-lg">
+    <i class="bi bi-chat-dots-fill fs-4"></i>
+</button>
+
+<!-- Chatbot Modal -->
+<div id="chatbot-modal" class="chatbot-modal">
+    <div class="chatbot-content shadow-lg rounded">
+        <!-- Header -->
+        <div class="chatbot-header d-flex justify-content-between align-items-center p-3">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-stars me-2 fs-5"></i>
+                <h5 class="m-0 fw-semibold">AI Assist</h5>
+            </div>
+            <button class="btn-close btn-close-primary" id="close-chatbot">
+<!--                <i class="bi bi-x-circle fs-4"></i>-->
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div id="chatbot-body" class="chatbot-body p-4 bg-light">
+            <div id="chatbot-intro" class="text-center">
+                <div class="ai-icon mb-4">
+                    <i class="bi bi-stars"></i>
+                </div>
+                <h6 class="text-secondary mb-4">Ask anything about the video</h6>
+
+                <!-- Suggestion Buttons -->
+                <button class="btn btn-outline-secondary suggestion-btn rounded-pill">
+                    How can I get legal help for my case?
+                </button>
+                <button class="btn btn-outline-secondary suggestion-btn rounded-pill">
+                    What documents do I need for a legal consultation?
+                </button>
+                <button class="btn btn-outline-secondary suggestion-btn rounded-pill">
+                    How long does a typical legal case take?
+                </button>
+            </div>
+
+            <!-- Chat Messages Container -->
+            <div id="chat-messages" class="d-none">
+                <!-- Messages will be added here dynamically -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="chatbot-footer border-top p-3 bg-white rounded-bottom">
+            <div class="input-group">
+                <input
+                        type="text"
+                        id="chat-input"
+                        class="form-control border-0 bg-light"
+                        placeholder="Ask me anything"
+                        style="border-radius: 2rem;">
+                <button
+                        id="send-btn"
+                        class="btn btn-primary rounded-circle ms-2"
+                        style="width: 40px; height: 40px;">
+                    <i class="bi bi-send-fill"></i>
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-7 col-lg-8">
-        <h2 class="mb-3">Contact Us</h2>
-        <p>Have a question or need to schedule a consultation? Send us a message using the form below.</p>
-        <form method="post" class="needs-validation" novalidate>
-            {% csrf_token %}
-            <div class="row g-3">
-                <div class="col-12">
-                    <label for="id_name" class="form-label">Name</label>
+
+<!-- Contact Section -->
+<section class="container py-5" id="contact">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <h2 class="fw-bold text-dark mb-4 text-center">Contact Us</h2>
+            <p class="text-secondary text-center mb-4">
+                Need personalized legal assistance? Send us a message below and our team will reach out to you shortly.
+            </p>
+            <form method="post" class="bg-white p-4 rounded shadow-sm needs-validation" novalidate>
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="id_name" class="form-label fw-semibold">Name</label>
                     {{ form.name.as_widget|add_class:"form-control" }}
                 </div>
-                <div class="col-12">
-                    <label for="id_email" class="form-label">Email</label>
+                <div class="mb-3">
+                    <label for="id_email" class="form-label fw-semibold">Email</label>
                     {{ form.email.as_widget|add_class:"form-control" }}
                 </div>
-                <div class="col-12">
-                    <label for="id_message" class="form-label">Message</label>
+                <div class="mb-3">
+                    <label for="id_message" class="form-label fw-semibold">Message</label>
                     {{ form.message.as_widget|add_class:"form-control" }}
                 </div>
-            </div>
-            <hr class="my-4">
-            <button class="w-100 btn btn-primary btn-lg" type="submit">Send Message</button>
-        </form>
+                <button class="btn btn-warning w-100 fw-semibold py-2 text-white" type="submit">Send Message</button>
+            </form>
+        </div>
     </div>
-</div>
-
+</section>
 {% endblock %}
 
 {% block extra_js %}
-{# This is a simple template filter to add a class, we'll need to create it #}
+
+<style>
+    .chatbot-modal {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1050;
+        display: none;
+    }
+
+    .chatbot-modal.active {
+        display: block;
+    }
+
+    .chatbot-content {
+        width: 380px;
+        max-width: 90vw;
+        background: white;
+    }
+
+    .chatbot-header {
+        border-top-left-radius: 0.5rem;
+        border-top-right-radius: 0.5rem;
+    }
+
+    .chatbot-body {
+        height: 400px;
+        overflow-y: auto;
+    }
+
+    .ai-icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .ai-icon i {
+        font-size: 3rem;
+        color: white;
+    }
+
+    .suggestion-btn {
+        margin-bottom: 0.5rem;
+        white-space: normal;
+        text-align: left;
+    }
+
+    .chat-message {
+        margin-bottom: 1rem;
+        animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message-user {
+        background-color: #667eea;
+        color: white;
+        padding: 0.75rem;
+        border-radius: 1rem;
+        max-width: 80%;
+        margin-left: auto;
+    }
+
+    .message-bot {
+        background-color: #e9ecef;
+        color: #212529;
+        padding: 0.75rem;
+        border-radius: 1rem;
+        max-width: 80%;
+    }
+
+    .chatbot-trigger {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1040;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const modal = document.getElementById('chatbot-modal');
+    const trigger = document.getElementById('chatbot-trigger');
+    const closeBtn = document.getElementById('close-chatbot');
+    const sendBtn = document.getElementById('send-btn');
+    const chatInput = document.getElementById('chat-input');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatIntro = document.getElementById('chatbot-intro');
+
+    // Toggle modal
+    trigger.addEventListener('click', () => {
+        modal.classList.add('active');
+        trigger.style.display = 'none';
+    });
+
+    closeBtn.addEventListener('click', () => {
+        modal.classList.remove('active');
+        trigger.style.display = 'block';
+    });
+
+    // Get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    const csrftoken = getCookie('csrftoken');
+
+    // Define contextual suggestions based on keywords
+    const suggestionMap = {
+        'employee|employment|work|job|workplace': [
+            'What are my rights if I\'m fired without notice?',
+            'Can my employer reduce my salary?',
+            'How do I prove workplace discrimination?'
+        ],
+        'dismissal|fired|terminated|termination': [
+            'What compensation am I entitled to?',
+            'Can I challenge my dismissal in court?',
+            'What is the notice period required by law?'
+        ],
+        'contract|agreement': [
+            'What should be in an employment contract?',
+            'Can I break my contract early?',
+            'What happens if my employer breaches the contract?'
+        ],
+        'salary|pay|wage|compensation': [
+            'What is the minimum wage in Cameroon?',
+            'Can I sue for unpaid wages?',
+            'How is overtime calculated?'
+        ],
+        'dispute|conflict|issue': [
+            'How do I file a complaint with labor authorities?',
+            'What are the steps in mediation?',
+            'How long does a labor case take?'
+        ],
+        'discrimination|harassment': [
+            'What evidence do I need to prove discrimination?',
+            'Can I report harassment anonymously?',
+            'What protections exist for whistleblowers?'
+        ],
+        'leave|vacation|maternity|sick': [
+            'How much annual leave am I entitled to?',
+            'What is maternity leave duration in Cameroon?',
+            'Can my employer deny my leave request?'
+        ],
+        'divorce|marriage|separation': [
+            'What are the grounds for divorce in Cameroon?',
+            'How is property divided in divorce?',
+            'What about child custody arrangements?'
+        ],
+        'property|land|real estate': [
+            'How do I verify land ownership?',
+            'What documents do I need to buy property?',
+            'How do I resolve a property boundary dispute?'
+        ],
+        'inheritance|will|estate': [
+            'Who inherits if there is no will?',
+            'Can I contest a will?',
+            'What are inheritance taxes in Cameroon?'
+        ],
+        'business|company|startup': [
+            'How do I register a business in Cameroon?',
+            'What are the tax obligations for businesses?',
+            'What legal structure should I choose?'
+        ],
+        'default': [
+            'How can I schedule a consultation?',
+            'What documents should I bring?',
+            'What are your legal fees?'
+        ]
+    };
+
+    // Function to get contextual suggestions
+    function getContextualSuggestions(userMessage, aiResponse) {
+        const combinedText = (userMessage + ' ' + aiResponse).toLowerCase();
+
+        for (const [keywords, suggestions] of Object.entries(suggestionMap)) {
+            if (keywords === 'default') continue;
+
+            const keywordList = keywords.split('|');
+            if (keywordList.some(keyword => combinedText.includes(keyword))) {
+                return suggestions;
+            }
+        }
+
+        return suggestionMap.default;
+    }
+
+    // Function to display suggestion buttons
+    function displaySuggestions(suggestions) {
+        // Remove existing suggestions
+        const existingSuggestions = document.getElementById('dynamic-suggestions');
+        if (existingSuggestions) {
+            existingSuggestions.remove();
+        }
+
+        // Create new suggestion container
+        const suggestionContainer = document.createElement('div');
+        suggestionContainer.id = 'dynamic-suggestions';
+        suggestionContainer.className = 'chat-message mt-3';
+        suggestionContainer.innerHTML = '<div class="text-muted small mb-2">Related questions:</div>';
+
+        const buttonGroup = document.createElement('div');
+        buttonGroup.className = 'd-grid gap-2';
+
+        suggestions.forEach(suggestion => {
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-sm btn-outline-primary rounded-pill text-start';
+            btn.textContent = suggestion;
+            btn.addEventListener('click', () => {
+                sendMessage(suggestion);
+            });
+            buttonGroup.appendChild(btn);
+        });
+
+        suggestionContainer.appendChild(buttonGroup);
+        chatMessages.appendChild(suggestionContainer);
+        scrollToBottom();
+    }
+
+    // Send message function
+    async function sendMessage(message) {
+        if (!message.trim()) return;
+
+        // Disable input while processing
+        chatInput.disabled = true;
+        sendBtn.disabled = true;
+
+        // Hide intro and show messages
+        chatIntro.classList.add('d-none');
+        chatMessages.classList.remove('d-none');
+
+        // Add user message
+        const userMsg = document.createElement('div');
+        userMsg.className = 'chat-message text-end';
+        userMsg.innerHTML = `<div class="message-user d-inline-block">${escapeHtml(message)}</div>`;
+        chatMessages.appendChild(userMsg);
+
+        // Clear input
+        chatInput.value = '';
+
+        // Scroll to bottom
+        scrollToBottom();
+
+        // Add typing indicator
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'chat-message';
+        typingIndicator.id = 'typing-indicator';
+        typingIndicator.innerHTML = `
+        <div class="message-bot d-inline-block">
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Typing...
+        </div>`;
+        chatMessages.appendChild(typingIndicator);
+        scrollToBottom();
+
+        try {
+            // Call Django backend
+            const response = await fetch('/chatbot/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ message: message })
+            });
+
+            const data = await response.json();
+
+            // Remove typing indicator
+            typingIndicator.remove();
+
+            if (response.ok && data.reply) {
+                // Add bot response
+                const botMsg = document.createElement('div');
+                botMsg.className = 'chat-message';
+                botMsg.innerHTML = `<div class="message-bot d-inline-block">${escapeHtml(data.reply)}</div>`;
+                chatMessages.appendChild(botMsg);
+
+                // Generate and display contextual suggestions
+                const suggestions = getContextualSuggestions(message, data.reply);
+                displaySuggestions(suggestions);
+            } else {
+                // Handle error
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'chat-message';
+                errorMsg.innerHTML = `<div class="message-bot d-inline-block text-danger">Sorry, something went wrong. Please try again.</div>`;
+                chatMessages.appendChild(errorMsg);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            // Remove typing indicator
+            document.getElementById('typing-indicator')?.remove();
+
+            // Show error message
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'chat-message';
+            errorMsg.innerHTML = `<div class="message-bot d-inline-block text-danger">Network error. Please check your connection and try again.</div>`;
+            chatMessages.appendChild(errorMsg);
+        } finally {
+            // Re-enable input
+            chatInput.disabled = false;
+            sendBtn.disabled = false;
+            chatInput.focus();
+            scrollToBottom();
+        }
+    }
+
+    // Helper function to escape HTML
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Helper function to scroll to bottom
+    function scrollToBottom() {
+        const chatBody = document.getElementById('chatbot-body');
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    // Send button click
+    sendBtn.addEventListener('click', () => {
+        sendMessage(chatInput.value);
+    });
+
+    // Enter key press
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage(chatInput.value);
+        }
+    });
+
+    // Initial suggestion buttons
+    document.addEventListener('DOMContentLoaded', () => {
+        const suggestionBtns = document.querySelectorAll('.suggestion-btn');
+        suggestionBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                sendMessage(btn.textContent.trim());
+            });
+        });
+    });
+</script>
 {% endblock %}

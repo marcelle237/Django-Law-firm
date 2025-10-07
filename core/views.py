@@ -1,3 +1,6 @@
+import openai
+from openai import OpenAI
+
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -10,15 +13,77 @@ from django.urls import reverse_lazy
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
-from django.contrib.auth.models import User 
+from django.contrib.auth.models import User
+
+from lawfirm import settings
 from .models import Client, Case, Document, Visitor, Availability, LawyerProfile, Message
 from .forms import ClientRegistrationForm, ClientProfileForm, CaseForm, DocumentForm, VisitorForm, AppointmentForm, AvailabilityForm
 from .decorators import group_required
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+client = OpenAI(api_key="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", base_url="https://openrouter.ai/api/v1")
+
+@csrf_exempt
+def chatbot_view(request):
+    MAX_HISTORY = 6
+
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method"}, status=400)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    user_message = data.get("message", "").strip()
+    if not user_message:
+        return JsonResponse({"reply": ""})
+
+    # Chat history
+    history = request.session.get("chat_history", [])
+    history.append({"role": "user", "content": user_message})
+    if len(history) > MAX_HISTORY:
+        history = history[-MAX_HISTORY:]
+
+    # System + user messages
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "You are a legal assistant specialized in Cameroon law. "
+                "Answer user queries clearly and precisely, citing the law where relevant. "
+                "If you aren’t certain, say you’re not a lawyer and suggest consulting a professional."
+            )
+        }
+    ]
+    for msg in history:
+        messages.append({"role": msg["role"], "content": msg["content"]})
+
+    # Call OpenRouter-hosted Claude model
+    try:
+        response = client.chat.completions.create(
+            model="anthropic/claude-sonnet-4.5",  # exact OpenRouter model ID
+            messages=messages,
+            temperature=0.5,
+            max_tokens=300
+        )
+        reply = response.choices[0].message.content.strip()
+    except Exception as e:
+        print("OpenRouter API error:", e)
+        reply = "Sorry, I'm having trouble connecting to the AI service right now."
+
+    # Save assistant reply to session
+    history.append({"role": "assistant", "content": reply})
+    request.session["chat_history"] = history
+
+    return JsonResponse({"reply": reply})
 
 
 def landing_page(request):
-    if request.user.is_authenticated:
-        return redirect('dashboard')
+    # if request.user.is_authenticated:
+    #     return redirect('dashboard')
 
     if request.method == 'POST':
         form = VisitorForm(request.POST)
@@ -190,7 +255,7 @@ def case_detail(request, pk):
                 document.save()
                 messages.success(request, f'Document "{document.title}" has been uploaded successfully.')
                 return redirect('case_detail', pk=case.pk)
-    
+
     context = {
         'case': case,
         'documents': documents,
@@ -215,7 +280,7 @@ def case_detail(request, pk):
 #                 },
 #             )
 #             return JsonResponse({'message': 'Message sent successfully!!!'})
-        
+
 #     return JsonResponse({'message': 'Invalid request!!!'}, status=400)
 #     return render(request, "chat_room.html", {"chat": chat})
 

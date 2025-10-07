@@ -10,23 +10,37 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+from django.conf import settings
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from .env file
+env_file = os.path.join(BASE_DIR, '.env')
+if os.path.exists(env_file):
+    with open(env_file) as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#') and '=' in line:
+                key, value = line.split('=', 1)
+                os.environ.setdefault(key.strip(), value.strip())
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-6@%@ittnl93a&tza46--^jzv4%=o%uo*$^q8h01i(sd+@=ip0+'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-6@%@ittnl93a&tza46--^jzv4%=o%uo*$^q8h01i(sd+@=ip0+')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = []
 
+# OpenAI API Key
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
+OPEN_ROUTER_API_KEY='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'
 
 # Application definition
 
@@ -39,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'channels',
+    'chatbot'
 ]
 
 MIDDLEWARE = [
@@ -92,6 +107,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 
 # Password validation
